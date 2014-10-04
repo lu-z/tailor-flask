@@ -13,3 +13,4 @@ def get_batch(key, offset):
   print 'Url is', url
   r = requests.get(url)
   return json.loads(r.content)['products']
+  

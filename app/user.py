@@ -6,3 +6,4 @@ class User:
 
   def update(self, new_data):
     self.prefs = new_data
+    
