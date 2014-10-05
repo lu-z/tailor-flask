@@ -11,7 +11,12 @@ class Item:
         self.name = name
         self.description = description
         self.brand = brand
-        self.categories = categories
+        self.categories = []
+        for category in categories:
+            if category == 'dresses' or category == 'Dresses' or category == 'DRESSES':
+                continue
+            self.categories.append(category)
+
         self.types = types
         self.attributes = attributes
         self.colors = colors

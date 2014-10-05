@@ -1,9 +1,8 @@
 class SafeDict(dict):
-    _keys = []
 
     def __init__(self, d={}):
-        _keys = d.keys()
-        for key in _keys:
+        self._keys = d.keys()
+        for key in self._keys:
             self.__setitem__(key, d[key])
 
     def __getitem__(self, key):

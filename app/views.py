@@ -21,3 +21,7 @@ def update_prefs():
 @app.route('/close')
 def update_db():
   core.db_post_user()
+
+@app.route('/stats')
+def get_stats():
+  return json.dumps(core.get_stats())

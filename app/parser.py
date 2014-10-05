@@ -1,13 +1,23 @@
 import util
 
+# DRESS_TYPES = ['gown', 'tulle', 'layer', 'stretch', 'pencil', 'ribbon', 'skirt',
+#                'split', 'sheath', 'maxi', 'chiffon', 'bodice', 'wrap', 'lace',
+#                'georgette', 'ruch', 'flare', 'simple', 'summer', 'ponte', 'peplum',
+#                'satin', 'exposed']
+# DRESS_ATTRIBUTES = ['hook', 'jewel', 'embroider', 'belt', 'strapless', 'polka',
+#                     'floral', 'knit', 'waistband', 'knee', 'cutout', 'fit', 'slit',
+#                     'sleeveless', 'a-line', 'spaghetti', 'v-neck', 'boat', 'sweetheart',
+#                     'crew','surplice']
+
 DRESS_TYPES = ['gown', 'tulle', 'layer', 'stretch', 'pencil', 'ribbon', 'skirt',
                'split', 'sheath', 'maxi', 'chiffon', 'bodice', 'wrap', 'lace',
-               'georgette', 'ruch', 'flare', 'simple', 'summer', 'ponte', 'peplum',
-               'satin', 'exposed']
+               'georgette', 'flare', 'simple', 'summer', 'ponte', 'peplum',
+               'satin', 'exposed', 'fit', 'slit']
+
 DRESS_ATTRIBUTES = ['hook', 'jewel', 'embroider', 'belt', 'strapless', 'polka',
-                    'floral', 'knit', 'waistband', 'knee', 'cutout', 'fit', 'slit',
-                    'sleepless', 'a-line', 'spaghetti', 'v-neck', 'boat', 'sweetheart',
-                    'crew', 'surplice']
+                    'floral', 'knit', 'waistband', 'knee', 'cutout',
+                    'sleeveless', 'a-line', 'spaghetti', 'v-neck', 'boat', 'sweetheart',
+                    'crew','surplice','ruch']
 
 def parse(name, description):
     global DRESS_TYPES, DRESS_ATTRIBUTES
