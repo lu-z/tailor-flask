@@ -1,4 +1,5 @@
 from app import app, classes, shopstyle
+from flask import request
 import core, json
 
 @app.route('/')
@@ -13,8 +14,9 @@ def get_dress_batch():
 @app.route('/update', methods=['POST'])
 def update_prefs():
   item = json.loads(request.form['item'])
-  weight = json.loads(request.form['weight'])
+  weight = json.loads(request.form['weight'])['weight']
   core.update_prefs(item, weight)
+  return 'Success\n'
 
 @app.route('/close')
 def update_db():

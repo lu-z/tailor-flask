@@ -54,7 +54,7 @@ def get_batch(t):
       imgurl = dress['image']['sizes']['Best']['url']      
 
     it = classes.Item(name, description, brand, categories, types, attributes, colors, imgurl, price)
-    # if matches(user, item): #implement this
+    # if matches(user, item): # TODO
     result.append(it.toDict())
     new_dresses = dresses[i+1:]
 
@@ -70,9 +70,15 @@ def update_list(t):
   dresses += shopstyle.get_batch(t, current_offset)
   current_offset += len(dresses) - old_size
 
-def update_prefs(item, weight):
-  for key in item.keys:
-    user_prefs[key] += weight
+def update_prefs(item, weight): # TODO fix weights
+  for category in item['categories']:
+    user_prefs[category] += float(weight) / len(item['categories'])
+  for t in item['types']:
+    user_prefs[t] += float(weight) / len(item['types'])
+  for attribute in item['attributes']:
+    user_prefs[attribute] += float(weight) / len(item['attributes'])
+  for color in item['colors']:
+    user_prefs[color] += float(weight) / len(item['colors'])
 
 def de_htmlize(s):
   started = False
@@ -97,7 +103,10 @@ def db_get_user(uid):
        })
   result = json.loads(connection.getresponse().read())
   del result['objectId']
-  del result['uid']
+  try:
+    del result['uid']
+  except KeyError:
+    print "No uid!"
   del result['createdAt']
   del result['updatedAt']  
   user_prefs = SafeDict(result)
