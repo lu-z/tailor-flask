@@ -1,3 +1,3 @@
 #!/usr/bin/python
 from app import app, coretemp
-app.run(debug=True, host='0.0.0.0')
+app.run(debug=True, host='http://secret-atoll-9740.herokuapp.com')
