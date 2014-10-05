@@ -1,7 +1,7 @@
 import util
 
 DRESS_TYPES = ['gown', 'tulle', 'layer', 'stretch', 'pencil', 'ribbon', 'skirt',
-               'slit', 'split', 'sheath', 'maxi', 'chiffon', 'bodice', 'wrap', 'lace',
+               'split', 'sheath', 'maxi', 'chiffon', 'bodice', 'wrap', 'lace',
                'georgette', 'ruch', 'flare', 'simple', 'summer', 'ponte', 'peplum',
                'satin', 'exposed']
 DRESS_ATTRIBUTES = ['hook', 'jewel', 'embroider', 'belt', 'strapless', 'polka',

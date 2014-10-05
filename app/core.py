@@ -1,16 +1,23 @@
 from app import shopstyle, classes
-import json, parser, threading
+from util import SafeDict
+import httplib, json, parser, threading
 
 QUERY_SIZE = 10
 REQUEST_THRESHOLD = 20
+USER_ID = 'i7AfKxW9wG'
 
 current_offset = 0
-dresses_json = []
 dresses = []
 
-def get_batch(t):
-  global current_offset, dresses
+user_prefs = SafeDict()
+initiated = False
 
+def get_batch(t):
+  global current_offset, dresses, initiated
+
+  if not initiated:
+    db_get_user(USER_ID)
+    initiated = True
   if not dresses:
     update_list(t)
 
@@ -63,6 +70,10 @@ def update_list(t):
   dresses += shopstyle.get_batch(t, current_offset)
   current_offset += len(dresses) - old_size
 
+def update_prefs(item, weight):
+  for key in item.keys:
+    user_prefs[key] += weight
+
 def de_htmlize(s):
   started = False
   new_s = []
@@ -74,4 +85,29 @@ def de_htmlize(s):
     if c == '>':
       started = False
   return ''.join(new_s).strip()
-  
+
+def db_get_user(uid):
+  global user_prefs
+
+  connection = httplib.HTTPSConnection('api.parse.com', 443)
+  connection.connect()
+  connection.request('GET', '/1/classes/Dresses/' + uid, '', {
+         "X-Parse-Application-Id": "PKrmNmjPokcQfoDsqyAWXfxjoHyUsPxFRFd6Q9u3",
+         "X-Parse-REST-API-Key": "6UQ7REq6nFC2WLNX7sIgM90Qm1jcLZJOTRV0XLLk"
+       })
+  result = json.loads(connection.getresponse().read())
+  del result['objectId']
+  del result['uid']
+  del result['createdAt']
+  del result['updatedAt']  
+  user_prefs = SafeDict(result)
+
+def db_post_user(uid=USER_ID):
+  connection = httplib.HTTPSConnection('api.parse.com', 443)
+  connection.connect()
+  connection.request('PUT', '/1/classes/Dresses/' + uid, json.dumps(user_prefs), {
+         "X-Parse-Application-Id": "PKrmNmjPokcQfoDsqyAWXfxjoHyUsPxFRFd6Q9u3",
+         "X-Parse-REST-API-Key": "6UQ7REq6nFC2WLNX7sIgM90Qm1jcLZJOTRV0XLLk",
+         "Content-Type": "application/json"
+       })
+  result = json.loads(connection.getresponse().read())
