@@ -7,7 +7,7 @@ PRODUCTS = '/products'
 def get_batch(key, offset):
   url = URL_PREFIX + PRODUCTS
   url += '?' + 'pid=' + API_KEY
-  url += '&' + 'fts=' + key
+  url += '&' + 'fts=' + key +" under $50"
   url += '&' + 'offset=' + str(offset)
   url += '&' + 'limit=' + '100'
   print 'Url is', url
