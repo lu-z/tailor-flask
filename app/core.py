@@ -4,9 +4,10 @@ import httplib, json, operator, parser, random, threading
 
 QUERY_SIZE = 10
 REQUEST_THRESHOLD = 20
+RAND_CUTOFF = 0.15
 USER_ID = 'i7AfKxW9wG'
 
-MAGIC_THRESHOLD = -1
+MAGIC_THRESHOLD = 0
 CATEGORY_WEIGHT = 3
 TYPE_WEIGHT = 4
 ATTRIBUTE_WEIGHT = 2
@@ -14,6 +15,7 @@ COLOR_WEIGHT = 2
 
 current_offset = 0
 dresses = []
+result = []
 
 user_prefs = SafeDict()
 user_brands = SafeDict()
@@ -25,11 +27,9 @@ initialized = False
 iterations = 0
 
 def get_batch(t):
-  global current_offset, dresses, initialized, iterations
+  global current_offset, dresses, initialized, iterations, result
 
-  print "get_batch ITERATIONS1:", iterations
   iterations += 1
-  print "get_batch ITERATIONS2:", iterations
 
   if not initialized:
     db_get_user(USER_ID)
@@ -37,17 +37,13 @@ def get_batch(t):
   if not dresses:
     update_list(t)
 
-  print "PRE UPDATE"
-  print user_prefs
   update_pref_weights()
-  print "POST UPDATE"
-  print user_prefs
 
   if len(dresses) < REQUEST_THRESHOLD:
     update_thread = threading.Thread(target=update_list, args=[t])
     update_thread.start()
 
-  result, new_dresses = [], [];
+  new_dresses = [];
   for i in range(0, len(dresses)):
     if len(result) >= QUERY_SIZE:
       break
@@ -76,7 +72,8 @@ def get_batch(t):
       imgurl = dress['image']['sizes']['Best']['url']      
 
     it = classes.Item(name, description, brand, categories, types, attributes, colors, imgurl, price)
-    if matches(user_prefs, it) or random.random() <= 0.1:
+    randd = random.random()
+    if matches(user_prefs, it) or randd <= RAND_CUTOFF:
       result.append(it.toDict())
     new_dresses = dresses[i+1:]
 
@@ -84,35 +81,32 @@ def get_batch(t):
   if not dresses:
     return get_batch(t)
 
-  return json.dumps(result)
+  return_json = json.dumps(result)
+  result = []
+  return return_json
 
 def matches(prefs, item):
   catotal = 0
   for category in item.categories:
     catotal +=  float(prefs[category]) / len(item.categories)
   catotal *= CATEGORY_WEIGHT
-  print "CATEGORY TOTAL = ", catotal
 
   ttotal = 0
   for t in item.types:
     ttotal +=  float(prefs[t]) / len(item.types)
   ttotal *= TYPE_WEIGHT
-  print "TYPES TOTAL = ", catotal
 
   atotal = 0
   for attribute in item.attributes:
     atotal +=  float(prefs[attribute]) / len(item.attributes)
   atotal *= ATTRIBUTE_WEIGHT
-  print "ATTRIBUTES TOTAL = ", catotal
 
   cototal = 0
   for color in item.colors:
     cototal +=  float(prefs[color]) / len(item.colors)
   cototal *= COLOR_WEIGHT
-  print "COLORS TOTAL = ", catotal
 
   total = catotal + ttotal + atotal + cototal
-  print "TOTAL = ", total
   if total < MAGIC_THRESHOLD:
     print item.imgurl
   return total >= MAGIC_THRESHOLD
@@ -125,7 +119,6 @@ def update_list(t):
 
 def update_prefs(item, weight):
   global iterations, user_brands, mean_price, yes_count
-  print "ITERATIONS is", iterations
 
   for category in item['categories']:
     user_prefs[category] += (float(weight) / len(item['categories'])) / iterations
@@ -199,7 +192,7 @@ def db_get_user(uid):
   try:
     del result['uid']
   except KeyError:
-    print "No uid!"
+    print ""
   del result['createdAt']
   del result['updatedAt']  
   user_prefs = SafeDict(result)
