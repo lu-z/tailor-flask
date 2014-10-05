@@ -29,7 +29,8 @@ iterations = 0
 def get_batch(t):
   global current_offset, dresses, initialized, iterations, result
 
-  iterations += 1
+  if iterations < 10:
+    iterations += 1
 
   if not initialized:
     db_get_user(USER_ID)
