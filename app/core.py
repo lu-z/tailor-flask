@@ -1,16 +1,16 @@
 from app import shopstyle, classes
 from util import SafeDict
-import httplib, json, operator, parser, threading
+import httplib, json, operator, parser, random, threading
 
 QUERY_SIZE = 10
 REQUEST_THRESHOLD = 20
 USER_ID = 'i7AfKxW9wG'
 
-MAGIC_THRESHOLD = 0
-CATEGORY_WEIGHT = 4
-TYPE_WEIGHT = 3
+MAGIC_THRESHOLD = -1
+CATEGORY_WEIGHT = 3
+TYPE_WEIGHT = 4
 ATTRIBUTE_WEIGHT = 2
-COLOR_WEIGHT = 1
+COLOR_WEIGHT = 2
 
 current_offset = 0
 dresses = []
@@ -76,7 +76,7 @@ def get_batch(t):
       imgurl = dress['image']['sizes']['Best']['url']      
 
     it = classes.Item(name, description, brand, categories, types, attributes, colors, imgurl, price)
-    if matches(user_prefs, it):
+    if matches(user_prefs, it) or random.random() <= 0.1:
       result.append(it.toDict())
     new_dresses = dresses[i+1:]
 
